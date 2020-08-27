@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ballRoll(View view, ImageView b){
+        //Log.i("", "")
         ImageView ball = b;
         fromX = (int)(ball.getX());
         fromY = (int)(ball.getY());
