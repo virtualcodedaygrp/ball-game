@@ -15,10 +15,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int MAX_BOUNCE = 10;
     public int BORDER_LEFT = 0;
-    public int BORDER_RIGHT = Resources.getSystem().getDisplayMetrics().widthPixels-50;
+    public int BORDER_RIGHT = Resources.getSystem().getDisplayMetrics().widthPixels - 50;
     public int BORDER_TOP = -70;
-    public int BORDER_BOTTOM = Resources.getSystem().getDisplayMetrics().heightPixels-300;
+    public int BORDER_BOTTOM = Resources.getSystem().getDisplayMetrics().heightPixels - 300;
     public int fromX;
     public int fromY;
     private Timer ballTime;
@@ -40,30 +41,31 @@ public class MainActivity extends AppCompatActivity {
         ballTime = new Timer();
     }
 
-    public void startGame(View view){
-        EditText text = (EditText)findViewById(R.id.degrees);
-        Button b = (Button)findViewById(R.id.starter);
+    public void startGame(View view) {
+        EditText text = (EditText) findViewById(R.id.degrees);
+        Button b = (Button) findViewById(R.id.starter);
         String degree = text.getText().toString();
         //Log.i("enter", "theta");
-        try{
+        try {
             double deg = Double.parseDouble(degree);
-            if((deg >= 0.0) && (deg <= 180.0)){
+            if ((deg >= 0.0) && (deg <= 90.0)) {
                 theta = deg;
             }
-        }catch(Exception e){}
+        } catch (Exception e) {
+        }
         text.setVisibility(View.INVISIBLE);
         b.setVisibility(View.INVISIBLE);
 
         startTime(view);
     }
 
-    public void startTime(View view){
+    public void startTime(View view) {
         x = view;
-        if(z == 0) {
+        if (z == 0) {
             ballTime.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    ballRoll(x, (ImageView)findViewById(R.id.redBall));
+                    ballRoll(x, (ImageView) findViewById(R.id.redBall));
                 }
 
             }, 0, 100);
@@ -74,26 +76,25 @@ public class MainActivity extends AppCompatActivity {
     private void message() {
         TextView wT = (TextView) findViewById(R.id.winText);
         TextView lT = (TextView) findViewById(R.id.lossText);
-        Log.i("bounce", "bounces: " + bounces);
-        if(bounces >= 25){
+        //Log.i("bounce", "bounces: " + bounces);
+        if (bounces >= MAX_BOUNCE) {
             lT.setVisibility(View.VISIBLE);
-        } else if(win){
+        } else if (win) {
             wT.setVisibility(View.VISIBLE);
         }
     }
 
-    public void ballRoll(View view, ImageView b){
+    public void ballRoll(View view, ImageView b) {
         //Log.i("", "")
         ImageView ball = b;
-        fromX = (int)(ball.getX());
-        fromY = (int)(ball.getY());
+        fromX = (int) (ball.getX());
+        fromY = (int) (ball.getY());
         int transX = getTranslateX();
         int transY = getTranslateY();
-        if(notOverlapBall(ball) && bounces < 25){
+        if (notOverlapBall(ball) && bounces < MAX_BOUNCE) {
             ball.animate().translationXBy(transX).translationYBy(transY).setDuration(25);
-        }
-        else{
-            if(!notOverlapBall(ball)){
+        } else {
+            if (!notOverlapBall(ball)) {
                 win = true;
             }
             ballTime.cancel();
@@ -108,19 +109,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean notOverlapBall(ImageView ball) {
-        ImageView area = (ImageView)findViewById(R.id.area);
-        int ballCenterX = (int)(ball.getX() + ball.getWidth()/2);
-        int ballCenterY = (int)(ball.getY() + ball.getHeight()/2);
-        int areaMAXX = (int)(area.getX() + area.getWidth());
-        int areaMAXY = (int)(area.getY() + area.getHeight());
-        if(isOverlapping(ballCenterX, ballCenterY, areaMAXX, areaMAXY, area)){
+        ImageView area = (ImageView) findViewById(R.id.area);
+        int ballCenterX = (int) (ball.getX() + ball.getWidth() / 2);
+        int ballCenterY = (int) (ball.getY() + ball.getHeight() / 2);
+        int areaMAXX = (int) (area.getX() + area.getWidth());
+        int areaMAXY = (int) (area.getY() + area.getHeight());
+        if (isOverlapping(ballCenterX, ballCenterY, areaMAXX, areaMAXY, area)) {
             return false;
         }
         return true;
     }
 
     private boolean isOverlapping(int ballCenterX, int ballCenterY, int areaMAXX, int areaMAXY, ImageView area) {
-        if((ballCenterX >= area.getX() && ballCenterX <= areaMAXX) && (ballCenterY >= area.getY() && ballCenterY <= areaMAXY)){
+        if ((ballCenterX >= area.getX() && ballCenterX <= areaMAXX) && (ballCenterY >= area.getY() && ballCenterY <= areaMAXY)) {
             return true;
         }
         return false;
@@ -132,32 +133,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkBoundaryX(int x) {
-        if(x > BORDER_RIGHT){
-           xDirection = -1;
-           theta = 90-theta;
-           bounces++;
+        if (x > BORDER_RIGHT) {
+            xDirection = -1;
+            theta = 90 - theta;
+            bounces++;
         }
-        if(x < BORDER_LEFT){
+        if (x < BORDER_LEFT) {
             xDirection = 1;
-            theta = 90-theta;
+            theta = 90 - theta;
             bounces++;
         }
     }
 
     private int getTranslateY() {
         checkBoundaryY(fromY + MOVE_Y * yDirection);
-        return Math.min(80, (int)(Math.tan((theta*Math.PI)/(180)) * MOVE_X)) * yDirection;
+        return Math.min(80, (int) (Math.tan((theta * Math.PI) / (180)) * MOVE_X)) * yDirection;
     }
 
     private void checkBoundaryY(int y) {
-        if(y > BORDER_BOTTOM){
+        if (y > BORDER_BOTTOM) {
             yDirection = -1;
-            theta = 90-theta;
+            theta = 90 - theta;
             bounces++;
         }
-        if(y < BORDER_TOP){
+        if (y < BORDER_TOP) {
             yDirection = 1;
-            theta = 90-theta;
+            theta = 90 - theta;
             bounces++;
         }
     }
