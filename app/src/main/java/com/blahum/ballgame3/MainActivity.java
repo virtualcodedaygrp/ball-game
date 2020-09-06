@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         startTime(view);
     }
-
+//Mahir lol
     public void startTime(View view) {
         x = view;
         if (z == 0) {
